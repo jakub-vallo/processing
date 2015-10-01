@@ -35,14 +35,17 @@ boolean AddPoints = false;
 boolean DeletePoints = false;
 boolean MovePoints = false;
 
+boolean IsPointMoving = false;
+int movingPointIndex = -1;
 
 
 void draw() {
   fill(0);
   if (mousePressed) {
-    //print("mouse", mouseX, mouseY);
+    //print("mouse", mouseX, mouseY); //<>//
     if(mouseButton == RIGHT){
       DisableButtons();
+      if(IsPointMoving) CancelPointMoving();
     }
     else {
      if(mouseX > 1025 && mouseX < 1175 && mouseY > 50 && mouseY < 100){
@@ -61,22 +64,17 @@ void draw() {
        drawPoint(mouseX,mouseY);
      }
      if(DeletePoints){
-       int remove_index = -1;
-       for(int i = 0;i < point_counter; i++){
-         //println(mouseX," ", mouseY, xPos.get(i), yPos.get(i)); 
-         if(mouseX > xPos.get(i) - 5 && mouseX < xPos.get(i) + 5 && mouseY > yPos.get(i) - 5 && mouseY < yPos.get(i) + 5){
-           remove_index = i; 
-           
-           fill(200,200,200);
-           ellipse(xPos.get(i),yPos.get(i),15,15);
-          }
-        }
-        
-        if(remove_index != -1){
-         xPos.remove(remove_index);
-         yPos.remove(remove_index);
-         point_counter--; 
-        }
+       deletePoint(mouseX, mouseY);
+     }
+     
+     if(IsPointMoving){
+      movePoint(mouseX, mouseY);
+      IsPointMoving = false;
+      movingPointIndex = -1;
+     }
+     
+     if(MovePoints && !IsPointMoving){
+      IsPointMoving =  setPointMoving(mouseX, mouseY); 
      }
     }
   }
@@ -84,12 +82,65 @@ void draw() {
 
 
 
+void movePoint(float x, float y){
+ fill(200,200,200);
+ ellipse(xPos.get(movingPointIndex), yPos.get(movingPointIndex),15,15);
+ 
+ xPos.remove(movingPointIndex);
+ yPos.remove(movingPointIndex);
+ 
+ drawPoint(x,y);
+ point_counter--;
+ xPos.append(x);
+ yPos.append(y);
+}
+
+boolean setPointMoving(float x, float y){
+ for(int i = 0;i < point_counter; i++){
+   //println(mouseX," ", mouseY, xPos.get(i), yPos.get(i)); 
+   if(x > xPos.get(i) - 5 && x < xPos.get(i) + 5 && y > yPos.get(i) - 5 && y < yPos.get(i) + 5){
+     movingPointIndex = i; 
+     
+     fill(50,50,200);
+     ellipse(xPos.get(i),yPos.get(i),11,11);
+     
+     return true;
+    }
+  }
+  
+  movingPointIndex = -1;
+  return false;
+}
+
+void deletePoint(float x, float y){
+ int remove_index = -1;
+ for(int i = 0;i < point_counter; i++){
+   //println(mouseX," ", mouseY, xPos.get(i), yPos.get(i)); 
+   if(x > xPos.get(i) - 5 && x < xPos.get(i) + 5 && y > yPos.get(i) - 5 && y < yPos.get(i) + 5){
+     remove_index = i; 
+     
+     fill(200,200,200);
+     ellipse(xPos.get(i),yPos.get(i),15,15);
+    }
+  }
+  
+  if(remove_index != -1){
+   xPos.remove(remove_index);
+   yPos.remove(remove_index);
+   point_counter--; 
+  } 
+}
+
 void drawPoint(float x, float y){
+  for(int i = 0; i < point_counter; i++){
+   if(xPos.get(i) == x && yPos.get(i) == y) return; 
+  }
+  
+  fill(0);
   ellipse(x,y,10,10);
     
   xPos.append(x);
   yPos.append(y);
-       
   point_counter++;
 }
 
@@ -117,12 +168,21 @@ void MovePoints(){
   ellipse(1015,275,15,15);
 }
 
+void CancelPointMoving(){
+ IsPointMoving = false;
+ fill(200,200,200);
+ ellipse(xPos.get(movingPointIndex), yPos.get(movingPointIndex),15,15);
+ fill(0);
+ ellipse(xPos.get(movingPointIndex), yPos.get(movingPointIndex),10,10);
+ movingPointIndex = -1;
+}
+
 void DisableButtons(){
  noStroke();
  AddPoints = false;
  DeletePoints = false;
  MovePoints = false;
-      
+ 
  fill(255);
  ellipse(1015,75,16,16);
  ellipse(1015,175,16,16);
