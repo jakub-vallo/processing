@@ -22,7 +22,7 @@ void setup(){
   rect(1025,250,150,50);
   fill(255);
   textSize(16);
-  text("Move points", 1060, 280);
+  text("Move point", 1060, 280);
 }
 
 int max_points = 1000;
@@ -38,11 +38,16 @@ boolean MovePoints = false;
 boolean IsPointMoving = false;
 int movingPointIndex = -1;
 
+float lX = 0;
+float lY = 0;
+
 
 void draw() {
   fill(0);
-  if (mousePressed) {
-    //print("mouse", mouseX, mouseY); //<>//
+  if (mousePressed && mouseX != lX && mouseY != lY) {
+    lX = mouseX;
+    lY = mouseY;
+    //print("mouse", mouseX, mouseY);
     if(mouseButton == RIGHT){
       DisableButtons();
       if(IsPointMoving) CancelPointMoving();
@@ -71,6 +76,7 @@ void draw() {
       movePoint(mouseX, mouseY);
       IsPointMoving = false;
       movingPointIndex = -1;
+      DisableButtons();
      }
      
      if(MovePoints && !IsPointMoving){
@@ -83,7 +89,8 @@ void draw() {
 
 
 void movePoint(float x, float y){
- fill(200,200,200);
+ println("Move point: ", xPos.get(movingPointIndex), yPos.get(movingPointIndex), "To: ", x, y);
+  fill(200,200,200);
  ellipse(xPos.get(movingPointIndex), yPos.get(movingPointIndex),15,15);
  
  xPos.remove(movingPointIndex);
@@ -91,8 +98,7 @@ void movePoint(float x, float y){
  
  drawPoint(x,y);
  point_counter--;
- xPos.append(x);
- yPos.append(y);
+ println("List: ", xPos.size(), " ", yPos.size());
 }
 
 boolean setPointMoving(float x, float y){
@@ -104,6 +110,7 @@ boolean setPointMoving(float x, float y){
      fill(50,50,200);
      ellipse(xPos.get(i),yPos.get(i),11,11);
      
+     println("Point set moving: ", xPos.get(i), yPos.get(i));
      return true;
     }
   }
@@ -125,23 +132,25 @@ void deletePoint(float x, float y){
   }
   
   if(remove_index != -1){
+   println("Delete point: ",xPos.get(remove_index),yPos.get(remove_index));
    xPos.remove(remove_index);
    yPos.remove(remove_index);
-   point_counter--; 
-  } 
+   point_counter--;
+   println("List: ", xPos.size(), " ", yPos.size());
+  }
+  
+  
 }
 
 void drawPoint(float x, float y){
-  for(int i = 0; i < point_counter; i++){
-   if(xPos.get(i) == x && yPos.get(i) == y) return; 
-  }
-  
+  println("Add point: ",x,y);
   fill(0);
   ellipse(x,y,10,10);
     
   xPos.append(x);
   yPos.append(y);
   point_counter++;
+  println("List: ", xPos.size(), " ", yPos.size());
 }
 
 void AddPoints(){
