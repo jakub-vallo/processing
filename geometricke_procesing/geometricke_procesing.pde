@@ -61,16 +61,21 @@ void draw() {
        drawPoint(mouseX,mouseY);
      }
      if(DeletePoints){
-        for(int i = 0;i < point_counter; i++){
-          if(mouseX > xPos.get(i) - 5 && mouseX < xPos.get(i) + 5 && mouseY > yPos.get(i) + 5 && mouseY < yPos.get(i) + 5){
-            print("bla");
-            xPos.remove(i);
-            yPos.remove(i);
-            point_counter--;
-            
-            fill(200,200,200);
-            ellipse(xPos.get(i),yPos.get(i),10,10);
+       int remove_index = -1;
+       for(int i = 0;i < point_counter; i++){
+         //println(mouseX," ", mouseY, xPos.get(i), yPos.get(i)); 
+         if(mouseX > xPos.get(i) - 5 && mouseX < xPos.get(i) + 5 && mouseY > yPos.get(i) - 5 && mouseY < yPos.get(i) + 5){
+           remove_index = i; 
+           
+           fill(200,200,200);
+           ellipse(xPos.get(i),yPos.get(i),15,15);
           }
+        }
+        
+        if(remove_index != -1){
+         xPos.remove(remove_index);
+         yPos.remove(remove_index);
+         point_counter--; 
         }
      }
     }
