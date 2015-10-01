@@ -28,12 +28,14 @@ void setup(){
 int max_points = 1000;
 int point_counter = 0;
 
-float[] xPos = new float[max_points];
-float[] yPos = new float[max_points];
+FloatList xPos = new FloatList();
+FloatList yPos = new FloatList();
 
 boolean AddPoints = false;
 boolean DeletePoints = false;
 boolean MovePoints = false;
+
+
 
 void draw() {
   fill(0);
@@ -59,9 +61,15 @@ void draw() {
        drawPoint(mouseX,mouseY);
      }
      if(DeletePoints){
-        for(int i = 0;i < max_points; i++){
-          if(mouseX > xPos[i] - 5 && mouseX < xPos[i] + 5 && mouseY > yPos[i] + 5 && mouseY < yPos[i] + 5){
-            //TODO: FloatList
+        for(int i = 0;i < point_counter; i++){
+          if(mouseX > xPos.get(i) - 5 && mouseX < xPos.get(i) + 5 && mouseY > yPos.get(i) + 5 && mouseY < yPos.get(i) + 5){
+            print("bla");
+            xPos.remove(i);
+            yPos.remove(i);
+            point_counter--;
+            
+            fill(200,200,200);
+            ellipse(xPos.get(i),yPos.get(i),10,10);
           }
         }
      }
@@ -74,8 +82,8 @@ void draw() {
 void drawPoint(float x, float y){
   ellipse(x,y,10,10);
     
-  xPos[point_counter] = x;
-  yPos[point_counter] = y;
+  xPos.append(x);
+  yPos.append(y);
        
   point_counter++;
 }
@@ -115,4 +123,3 @@ void DisableButtons(){
  ellipse(1015,175,16,16);
  ellipse(1015,275,16,16); 
 }
-
